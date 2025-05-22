@@ -7,5 +7,6 @@ public interface Drive extends Components {
     void addFile(File file);
     void removeFile(File file);
     void listFiles();
-    File findFile(String fileName) throws FileNotFoundException;
+    File findFileByName(String fileName) throws FileNotFoundException;
+    File findFileByContent(String textFragment) throws FileNotFoundException;
 }

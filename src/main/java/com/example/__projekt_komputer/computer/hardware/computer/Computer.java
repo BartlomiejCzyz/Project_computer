@@ -92,7 +92,7 @@ public class Computer {
     public File findFile(String fileName) {
         var drive = getDrive();
         try {
-            return drive.findFile(fileName);
+            return drive.findFileByName(fileName);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }

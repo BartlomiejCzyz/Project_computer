@@ -12,8 +12,9 @@ public enum MenuOption {
 
     ADD_FILE("1" , MenuIndicator.FILE_MENU),
     REMOVE_FILE("2" , MenuIndicator.FILE_MENU),
-    FIND_FILE("3" , MenuIndicator.FILE_MENU),
-    LIST_ALL_FILES("4",MenuIndicator.FILE_MENU),
+    FIND_FILE_BY_NAME("3" , MenuIndicator.FILE_MENU),
+    FIND_FILE_BY_CONTENT("4" , MenuIndicator.FILE_MENU),
+    LIST_ALL_FILES("5",MenuIndicator.FILE_MENU),
 
     ADD_HARDWARE("1",MenuIndicator.HARDWARE_MENU),
     REMOVE_HARDWARE("2",MenuIndicator.HARDWARE_MENU),

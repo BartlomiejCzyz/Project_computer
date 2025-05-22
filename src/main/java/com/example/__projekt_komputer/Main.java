@@ -79,8 +79,9 @@ public class Main {
                         Choose the option
                         1. Add file
                         2. Remove file
-                        3. Find file
-                        4. List all files
+                        3. Find file by name
+                        4. Fond file by content
+                        5. List all files
                         back <- to go back
                         end <- to exit
                         """);
@@ -93,8 +94,11 @@ public class Main {
                             case REMOVE_FILE ->{
                                 System.out.println("Removing file");
                             }
-                            case FIND_FILE ->{
-                                System.out.println("Finding file");
+                            case FIND_FILE_BY_NAME ->{
+                                System.out.println("Finding file by name");
+                            }
+                            case FIND_FILE_BY_CONTENT -> {
+                                System.out.println("Finding file by content");
                             }
                             case LIST_ALL_FILES ->{
                                 computer.listFiles();
