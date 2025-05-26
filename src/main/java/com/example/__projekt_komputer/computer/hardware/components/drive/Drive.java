@@ -5,7 +5,7 @@ import com.example.__projekt_komputer.computer.software.file.shared.FileNotFound
 
 public interface Drive extends Components {
     void addFile(File file);
-    void removeFile(File file);
+    void removeFile(String fileName);
     void listFiles();
     File findFileByName(String fileName) throws FileNotFoundException;
     File findFileByContent(String textFragment) throws FileNotFoundException;

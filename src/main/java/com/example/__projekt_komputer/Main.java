@@ -3,25 +3,31 @@ package com.example.__projekt_komputer;
 import com.example.__projekt_komputer.computer.hardware.components.Monitor;
 import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
 import com.example.__projekt_komputer.computer.hardware.components.drive.HDDDrive;
-import com.example.__projekt_komputer.computer.hardware.components.usbdevice.MemoryStick;
 import com.example.__projekt_komputer.computer.hardware.components.usbdevice.USBDevice;
 import com.example.__projekt_komputer.computer.hardware.computer.Computer;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuIndicator;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuOption;
 import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
+import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    private final FileService fileService;
+
+    public Main(FileService fileService) {
+        this.fileService = fileService;
+    }
     public void run() {
         Scanner scanner = new Scanner(System.in);
         Monitor monitor = new Monitor("Dell");
-        Drive   hddDrive = new HDDDrive("HDDDrive", Capacity.GB64);
+        Drive   hddDrive = new HDDDrive("HDDDrive", Capacity.GB64, fileService);
         Computer computer = Computer.getInstance(monitor, hddDrive);
         List<USBDevice> usbDevices = computer.getUSBDevices();
 
         MenuOption userChoice;
+        hddDrive.listFiles();
 
         do {
             System.out.println("""
@@ -57,9 +63,6 @@ public class Main {
                             case LIST_USB_DEVICES ->{
                                 for (USBDevice device : usbDevices){
                                     System.out.println(device.getName());
-                                    if(device instanceof MemoryStick){
-                                        System.out.println(((MemoryStick) device).getStorageCapacity() + "B");
-                                    }
                                 }
                             }
                             case END ->{

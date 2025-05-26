@@ -3,12 +3,13 @@ import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
 import com.example.__projekt_komputer.computer.hardware.components.ComponentType;
 import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
+import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 public class HDDDrive extends AbstractDrive {
 
 
 
-    public HDDDrive(String name, Capacity storageCapacity) {super(name, storageCapacity);}
+    public HDDDrive(String name, Capacity storageCapacity, FileService fileService) {super(name, storageCapacity, fileService);}
 
     @Override
     public File findFileByContent(String textFragment) throws FileNotFoundException {

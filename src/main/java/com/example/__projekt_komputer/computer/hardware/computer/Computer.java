@@ -4,9 +4,8 @@ import com.example.__projekt_komputer.computer.hardware.components.Components;
 import com.example.__projekt_komputer.computer.hardware.components.Headphones;
 import com.example.__projekt_komputer.computer.hardware.components.Monitor;
 import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
-import com.example.__projekt_komputer.computer.hardware.components.usbdevice.MemoryStick;
-import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.hardware.components.usbdevice.USBDevice;
+import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
 
 import java.util.ArrayList;
@@ -58,17 +57,6 @@ public class Computer {
         return usbDevices;
     }
 
-    public MemoryStick getMemoryStickByName(String name){
-        List<USBDevice> usbDevices = getUSBDevices();
-        for (USBDevice usbDevice : usbDevices) {
-            if (usbDevice instanceof MemoryStick) {
-                if ( usbDevice.getName().equals(name) ) {
-                    return (MemoryStick) usbDevice;
-                }
-            }
-        }
-        throw new RuntimeException("Memory stick '" + name + "' device not found");
-    }
 
     public void addComponent(Components component) {
         components.add(component);

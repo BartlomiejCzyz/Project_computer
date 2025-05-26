@@ -4,11 +4,10 @@ import com.example.__projekt_komputer.computer.hardware.components.ComponentType
 import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
 import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
+import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 public class M4Drive extends AbstractDrive{
-    public M4Drive(String name, Capacity storageCapacity) {
-        super(name, storageCapacity);
-    }
+    public M4Drive(String name, Capacity storageCapacity, FileService fileService) {super(name, storageCapacity, fileService);}
 
     @Override
     public File findFileByContent(String textFragment) throws FileNotFoundException {

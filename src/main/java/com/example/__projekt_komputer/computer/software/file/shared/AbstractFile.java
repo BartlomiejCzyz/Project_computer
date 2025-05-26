@@ -1,10 +1,10 @@
 package com.example.__projekt_komputer.computer.software.file.shared;
 
-public abstract class AbstractFile implements File {
+public abstract class AbstractFile extends File {
     protected final String name;
-    protected final int size;
+    protected final long size;
 
-    public AbstractFile(String name, int size) {
+    public AbstractFile(String name, long size) {
         this.name = name;
         this.size = size;
     }
@@ -15,7 +15,7 @@ public abstract class AbstractFile implements File {
     }
 
     @Override
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 }

@@ -4,13 +4,11 @@ import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
 import com.example.__projekt_komputer.computer.hardware.components.ComponentType;
 import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 public class SSDDrive extends AbstractDrive {
 
-    public SSDDrive(String name, Capacity capacity) {super(name, capacity);}
+    public SSDDrive(String name, Capacity storageCapacity, FileService fileService) {super(name, storageCapacity, fileService);}
 
 
 
