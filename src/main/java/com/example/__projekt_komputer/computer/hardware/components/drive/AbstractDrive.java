@@ -47,4 +47,7 @@ public abstract class AbstractDrive implements Drive {
     public String getName() {
         return name;
     }
+    public List<File> getAllFiles(){
+        return fileService.listFiles();
+    }
 }

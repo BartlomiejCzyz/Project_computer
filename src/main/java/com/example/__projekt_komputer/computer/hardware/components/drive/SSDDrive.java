@@ -6,6 +6,8 @@ import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
 import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
+import java.util.List;
+
 public class SSDDrive extends AbstractDrive {
 
     public SSDDrive(String name, Capacity storageCapacity, FileService fileService) {super(name, storageCapacity, fileService);}
@@ -13,7 +15,7 @@ public class SSDDrive extends AbstractDrive {
 
 
     @Override
-    public File findFileByContent(String textFragment) throws FileNotFoundException {
+    public List<File> findFileByContent(String textFragment) throws FileNotFoundException {
         return null;
     }
 

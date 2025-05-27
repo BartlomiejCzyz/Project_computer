@@ -8,6 +8,8 @@ import com.example.__projekt_komputer.computer.hardware.computer.Computer;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuIndicator;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuOption;
 import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
+import com.example.__projekt_komputer.computer.software.file.shared.File;
+import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
 import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 import java.util.List;
@@ -27,7 +29,12 @@ public class Main {
         List<USBDevice> usbDevices = computer.getUSBDevices();
 
         MenuOption userChoice;
-        hddDrive.listFiles();
+        try {
+            List<File> fileFound = hddDrive.findFileByContent("Libijskiej.");
+            System.out.println(fileFound.getFirst().getName());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         do {
             System.out.println("""
