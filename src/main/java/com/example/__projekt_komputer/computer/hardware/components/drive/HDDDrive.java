@@ -16,6 +16,7 @@ public class HDDDrive extends AbstractDrive {
 
     @Override
     public List<File> findFileByContent(String textFragment) throws FileNotFoundException {
+        System.out.println("hdd");
         List<File> allFiles = getAllFiles();
         List<File> matchingFiles = new ArrayList<>();
 

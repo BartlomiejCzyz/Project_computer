@@ -1,8 +1,11 @@
 package com.example.__projekt_komputer;
 
+import com.example.__projekt_komputer.computer.hardware.components.CPU;
 import com.example.__projekt_komputer.computer.hardware.components.Monitor;
 import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
+import com.example.__projekt_komputer.computer.hardware.components.drive.DriveFactory;
 import com.example.__projekt_komputer.computer.hardware.components.drive.HDDDrive;
+import com.example.__projekt_komputer.computer.hardware.components.drive.SSDDrive;
 import com.example.__projekt_komputer.computer.hardware.components.usbdevice.USBDevice;
 import com.example.__projekt_komputer.computer.hardware.computer.Computer;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuIndicator;
@@ -21,20 +24,24 @@ public class Main {
     public Main(FileService fileService) {
         this.fileService = fileService;
     }
-    public void run() {
+    public void run() throws FileNotFoundException {
         Scanner scanner = new Scanner(System.in);
+
         Monitor monitor = new Monitor("Dell");
-        Drive   hddDrive = new HDDDrive("HDDDrive", Capacity.GB64, fileService);
-        Computer computer = Computer.getInstance(monitor, hddDrive);
-        List<USBDevice> usbDevices = computer.getUSBDevices();
+
+        System.out.println("Computer creator: ");
+
+        CPU cpu = new CPU("intel", 8);
+       // CPU cpu = CPU.createCPU(scanner);
+
+        //Drive drive = DriveFactory.createDrive(scanner, fileService, cpu);
+       Drive drive = new HDDDrive("HDDDrive", Capacity.GB64, fileService);
+
+        Computer computer = Computer.getInstance(monitor, drive, cpu);
+        computer.setActiveDrive(drive);
 
         MenuOption userChoice;
-        try {
-            List<File> fileFound = hddDrive.findFileByContent("Libijskiej.");
-            System.out.println(fileFound.getFirst().getName());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
 
         do {
             System.out.println("""
@@ -51,6 +58,8 @@ public class Main {
                 case USB_DEVICES_MENU ->{
                     do{
                         System.out.println("""
+                        
+                        [USB devices menu]
                         Choose the option
                         1. Add USB device
                         2. Remove USB device
@@ -68,9 +77,9 @@ public class Main {
                                 System.out.println("Removing USB device");
                             }
                             case LIST_USB_DEVICES ->{
-                                for (USBDevice device : usbDevices){
-                                    System.out.println(device.getName());
-                                }
+                               // for (USBDevice device : usbDevices){
+                                  //  System.out.println(device.getName());
+                                //}
                             }
                             case END ->{
                                 System.exit(0);
@@ -86,11 +95,13 @@ public class Main {
                 case FILES_MENU ->{
                     do{
                         System.out.println("""
+                        
+                        [Files menu]
                         Choose the option
                         1. Add file
                         2. Remove file
                         3. Find file by name
-                        4. Fond file by content
+                        4. Find file by content
                         5. List all files
                         back <- to go back
                         end <- to exit
@@ -105,10 +116,17 @@ public class Main {
                                 System.out.println("Removing file");
                             }
                             case FIND_FILE_BY_NAME ->{
-                                System.out.println("Finding file by name");
+                                System.out.println("Enter file name: ");
+                                String fileName = scanner.nextLine();
+                                drive.findFileByName(fileName);
                             }
                             case FIND_FILE_BY_CONTENT -> {
-                                System.out.println("Finding file by content");
+                                try {
+                                    List<File> fileFound = computer.getActiveDrive().findFileByContent("Libijskiej.");
+                                    System.out.println(fileFound.getFirst().getName());
+                                } catch (FileNotFoundException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                             case LIST_ALL_FILES ->{
                                 computer.listFiles();
@@ -128,9 +146,13 @@ public class Main {
                 case HARDWARE_MENU ->{
                     do {
                         System.out.println("""
+                        
+                        [Hardware manu]
                         Choose the option
-                        1. Add hardware
-                        2. Remove hardware
+                        1. Add drive
+                        2. Remove drive
+                        3. Change drive
+                        4. Change cpu
                         3. List hardware
                         4. Set high monitor resolution
                         5. Set low monitor resolution
@@ -142,14 +164,23 @@ public class Main {
                         userChoice = MenuOption.chosenAction(scanner.nextLine(), MenuIndicator.HARDWARE_MENU);
 
                         switch (userChoice){
-                            case ADD_HARDWARE ->{
-                                System.out.println("Adding hardware");
+                            case ADD_DRIVE ->{
+                                Drive newDrive = DriveFactory.createDrive(scanner, fileService, cpu);
+                                computer.setActiveDrive(newDrive);
                             }
-                            case REMOVE_HARDWARE ->{
+                            case REMOVE_DRIVE ->{
                                 System.out.println("Removing hardware");
                             }
+                            case CHANGE_DRIVE -> {
+                                System.out.println("Enter drive's name");
+                                String driveName = scanner.nextLine();
+                                computer.changeActiveDrive(driveName);
+                            }
+                            case CHANGE_CPU ->{
+                                System.out.println("changing cpu");
+                            }
                             case LIST_HARDWARE ->{
-                                System.out.println("Listing hardware");
+                                computer.listComponents();
                             }
                             case SET_HIGH_MONITOR_RESOLUTION ->{
                                 monitor.setHeightResolution();
@@ -179,8 +210,6 @@ public class Main {
                 }
             }
         }while (!userChoice.equals(MenuOption.END));
-
-        System.out.println("cos");
 
     }
 }

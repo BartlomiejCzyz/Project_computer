@@ -1,5 +1,6 @@
 package com.example.__projekt_komputer.computer.hardware.computer;
 
+import com.example.__projekt_komputer.computer.hardware.components.CPU;
 import com.example.__projekt_komputer.computer.hardware.components.Components;
 import com.example.__projekt_komputer.computer.hardware.components.Headphones;
 import com.example.__projekt_komputer.computer.hardware.components.Monitor;
@@ -13,18 +14,21 @@ import java.util.List;
 
 public class Computer {
     List<Components> components = new ArrayList<>();
+    private Drive activeDrive;
+    private final List<Drive> inactiveDrives = new ArrayList<>();
+
 
     private static Computer instance;
 
-    private Computer(Monitor monitor, Drive drive) {
+    private Computer(Monitor monitor, Drive drive, CPU cpu) {
         components.add(monitor);
         components.add(drive);
-        // run();   dodać metodę uruchamiającą komputer, a w niej będzie ui (tak jakby odpali się terminal systemowy :P), jeżeli będzie w konstruktorze zostanie automatycznie wywołana podczas inicializowania instancji Computer
+        components.add(cpu);
     }
 
-    public static Computer getInstance(Monitor monitor, Drive drive){
+    public static Computer getInstance(Monitor monitor, Drive drive, CPU cpu){
         if (instance == null){
-            instance = new Computer(monitor, drive);
+            instance = new Computer(monitor, drive, cpu);
         }
         return instance;
     }
@@ -65,33 +69,42 @@ public class Computer {
     public void removeComponent(Components component){
         components.remove(component);
     }
+    public void listComponents(){
+        components.forEach(System.out::println);
+    }
 
-    public void addFile(File file){ //TODO metody działające na plikach trzeba dostosować do możliwości posiadania różnych nośników (twardy dysk, pendrive)
-        var drive = getDrive();
+    public void addFile(File file){
+        var drive = getActiveDrive();
         drive.addFile(file);
         components.add(drive);
     }
 
     public void listFiles(){
-        var drive = getDrive();
+        var drive = getActiveDrive();
         drive.listFiles();
     }
 
-    public File findFile(String fileName) {
-        var drive = getDrive();
-        try {
-            return drive.findFileByName(fileName);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+    public void setActiveDrive(Drive drive) {
+        if (this.activeDrive != null) {
+            inactiveDrives.add(this.activeDrive);
         }
+        this.activeDrive = drive;
+        components.removeIf(c -> c instanceof Drive);
+        components.add(drive);
     }
-
-    private Drive getDrive() {
-        for (Components component : components) {
-            if (component instanceof Drive) {
-                return (Drive) component;
+    public void changeActiveDrive(String name){
+        for (Drive drive : inactiveDrives){
+            if (drive.getName().equals(name)){
+                setActiveDrive(drive);
+                break;
             }
         }
-        throw new RuntimeException("No component found");
+        throw new IllegalStateException("No drive of this name");
+    }
+    public Drive getActiveDrive() {
+        if (activeDrive == null) {
+            throw new IllegalStateException("No active drive is currently set");
+        }
+        return activeDrive;
     }
 }

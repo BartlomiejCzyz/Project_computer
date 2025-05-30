@@ -1,5 +1,7 @@
 package com.example.__projekt_komputer.computer.hardware.components;
 
+import java.util.Scanner;
+
 public class CPU implements Components{
 
     private final String name;
@@ -16,11 +18,26 @@ public class CPU implements Components{
 
     @Override
     public String getName() {
-        return "";
+        return getName();
     }
 
     @Override
     public ComponentType getType() {
-        return null;
+        return ComponentType.CPU;
+    }
+    public static CPU createCPU(Scanner scanner){
+        System.out.println("Enter cpu name: ");
+        String cpuName = scanner.nextLine();
+        System.out.println("Enter the number of threads(1-16): ");
+        int  cpuThreads = scanner.nextInt();
+        scanner.nextLine();
+
+        if(cpuThreads>0 && cpuThreads<17){
+            return new CPU(cpuName, cpuThreads);
+        }else {
+            throw new RuntimeException("Incorrect thread pool");
+        }
+
+
     }
 }
