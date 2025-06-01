@@ -6,7 +6,6 @@ import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
 import com.example.__projekt_komputer.computer.hardware.components.drive.DriveFactory;
 import com.example.__projekt_komputer.computer.hardware.components.drive.HDDDrive;
 import com.example.__projekt_komputer.computer.hardware.components.drive.SSDDrive;
-import com.example.__projekt_komputer.computer.hardware.components.usbdevice.USBDevice;
 import com.example.__projekt_komputer.computer.hardware.computer.Computer;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuIndicator;
 import com.example.__projekt_komputer.computer.hardware.computer.MenuOption;
@@ -15,6 +14,8 @@ import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
 import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,7 +36,7 @@ public class Main {
        // CPU cpu = CPU.createCPU(scanner);
 
         //Drive drive = DriveFactory.createDrive(scanner, fileService, cpu);
-       Drive drive = new HDDDrive("HDDDrive", Capacity.GB64, fileService);
+       Drive drive = new SSDDrive("ssdrive", Capacity.GB64, fileService, cpu);
 
         Computer computer = Computer.getInstance(monitor, drive, cpu);
         computer.setActiveDrive(drive);
@@ -110,20 +111,34 @@ public class Main {
 
                         switch (userChoice){
                             case ADD_FILE ->{
-                                System.out.println("Adding file");
+                                computer.addFile(scanner);
                             }
                             case REMOVE_FILE ->{
-                                System.out.println("Removing file");
+                                System.out.println("Enter file name to remove: ");
+                                String fileName = scanner.nextLine();
+                                computer.removeFile(fileName);
                             }
                             case FIND_FILE_BY_NAME ->{
                                 System.out.println("Enter file name: ");
                                 String fileName = scanner.nextLine();
-                                drive.findFileByName(fileName);
+                                File fileByName = drive.findFileByName(fileName);
+                                System.out.println("Name: " + fileByName.getName() + ", type: " + fileByName.getType() + ", size: " + fileByName.getSize() + ", content: \n" + fileByName.getContent());
                             }
                             case FIND_FILE_BY_CONTENT -> {
                                 try {
+                                    Instant start = Instant.now();
+                                    System.out.println("Enter fragment of text you are looking for: ");
+                                    //String textFragment = scanner.nextLine();
                                     List<File> fileFound = computer.getActiveDrive().findFileByContent("Libijskiej.");
-                                    System.out.println(fileFound.getFirst().getName());
+                                    Instant end = Instant.now();
+                                    long duration = Duration.between(start, end).toMillis();
+                                    long durationSec = duration / 1000;
+                                    long durationMili = duration % 1000;
+
+                                    for (File file : fileFound){
+                                        System.out.println(file.getName());
+                                    }
+                                    System.out.println("Operation took: " + durationSec + " seconds i " + durationMili + " milliseconds");
                                 } catch (FileNotFoundException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -153,11 +168,11 @@ public class Main {
                         2. Remove drive
                         3. Change drive
                         4. Change cpu
-                        3. List hardware
-                        4. Set high monitor resolution
-                        5. Set low monitor resolution
-                        6. Change headphone's volume
-                        7. Show current headphone's volume
+                        5. List hardware
+                        6. Set high monitor resolution
+                        7. Set low monitor resolution
+                        8. Change headphone's volume
+                        9. Show current headphone's volume
                         back <- to go back
                         end <- to exit
                         """);
@@ -169,7 +184,9 @@ public class Main {
                                 computer.setActiveDrive(newDrive);
                             }
                             case REMOVE_DRIVE ->{
-                                System.out.println("Removing hardware");
+                                System.out.println("Enter drive name to remove: ");
+                                String driveName = scanner.nextLine();
+                                computer.removeDrive(driveName);
                             }
                             case CHANGE_DRIVE -> {
                                 System.out.println("Enter drive's name");
@@ -177,7 +194,8 @@ public class Main {
                                 computer.changeActiveDrive(driveName);
                             }
                             case CHANGE_CPU ->{
-                                System.out.println("changing cpu");
+                                CPU newCPU = CPU.createCPU(scanner);
+                                computer.changeCPU(newCPU);
                             }
                             case LIST_HARDWARE ->{
                                 computer.listComponents();

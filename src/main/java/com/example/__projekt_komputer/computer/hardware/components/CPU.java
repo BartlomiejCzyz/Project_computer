@@ -18,13 +18,14 @@ public class CPU implements Components{
 
     @Override
     public String getName() {
-        return getName();
+        return this.name;
     }
 
     @Override
     public ComponentType getType() {
         return ComponentType.CPU;
     }
+
     public static CPU createCPU(Scanner scanner){
         System.out.println("Enter cpu name: ");
         String cpuName = scanner.nextLine();

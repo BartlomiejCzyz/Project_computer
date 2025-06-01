@@ -1,6 +1,7 @@
 package com.example.__projekt_komputer.computer.hardware.components.drive;
 
 import com.example.__projekt_komputer.computer.hardware.components.CPU;
+import com.example.__projekt_komputer.computer.hardware.components.CpuAwareDrive;
 import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
 import com.example.__projekt_komputer.computer.hardware.components.ComponentType;
 import com.example.__projekt_komputer.computer.software.file.shared.File;
@@ -11,16 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class SSDDrive extends AbstractDrive {
-    private final CPU cpu;
+public class SSDDrive extends AbstractDrive implements CpuAwareDrive {
+    private CPU cpu;
 
     public SSDDrive(String name, Capacity storageCapacity, FileService fileService, CPU cpu) {super(name, storageCapacity, fileService); this.cpu = cpu;}
 
-
+    @Override
+    public void setCPU(CPU cpu) {
+        this.cpu = cpu;
+    }
 
     @Override
     public List<File> findFileByContent(String textFragment) throws FileNotFoundException {
-        System.out.println("ssd");
         List<File> allFiles = getAllFiles();
         int threadCount = cpu.getThreads(); // CPU wstrzyknięty wcześniej
 
@@ -79,6 +82,6 @@ public class SSDDrive extends AbstractDrive {
 
     @Override
     public ComponentType getType() {
-        return ComponentType.DRIVE;
+        return ComponentType.SSD_DRIVE;
     }
 }

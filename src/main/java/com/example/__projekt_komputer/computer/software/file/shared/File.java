@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 public class File {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String content;
@@ -17,6 +17,13 @@ public class File {
     private long size;
 
     public File() {
+    }
+
+    public File(String name, String content, String type, long size) {
+        this.name = name;
+        this.content = content;
+        this.type = type;
+        this.size = size;
     }
 
     public Integer getId() {

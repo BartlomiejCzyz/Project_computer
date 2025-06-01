@@ -6,6 +6,7 @@ import com.example.__projekt_komputer.computer.software.file.shared.FileService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 public abstract class AbstractDrive implements Drive {
 
@@ -20,7 +21,19 @@ public abstract class AbstractDrive implements Drive {
     }
 
     @Override
-    public void addFile(File file) {
+    public Capacity getCapacity(){
+        return capacity;
+    }
+
+    @Override
+    public void addFile(Scanner scanner) {
+        System.out.println("[File creator]");
+        System.out.println("Enter file name: ");
+        String fileName = scanner.nextLine();
+        System.out.println("Enter file content: ");
+        String fileContent = scanner.nextLine();
+
+        File file = new File(fileName, fileContent, "text", 0);
         fileService.addFile(file);
     }
 

@@ -13,11 +13,11 @@ public class M4Drive extends AbstractDrive{
 
     @Override
     public List<File> findFileByContent(String textFragment) throws FileNotFoundException {
-        return null;
+        return fileService.findFilesByContent(textFragment);
     }
 
     @Override
     public ComponentType getType() {
-        return null;
+        return ComponentType.M4_DRIVE;
     }
 }

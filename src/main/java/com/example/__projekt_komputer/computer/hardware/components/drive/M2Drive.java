@@ -2,6 +2,7 @@ package com.example.__projekt_komputer.computer.hardware.components.drive;
 
 import com.example.__projekt_komputer.computer.hardware.components.CPU;
 import com.example.__projekt_komputer.computer.hardware.components.ComponentType;
+import com.example.__projekt_komputer.computer.hardware.components.CpuAwareDrive;
 import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
 import com.example.__projekt_komputer.computer.software.file.shared.File;
 import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
@@ -11,13 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class M2Drive extends AbstractDrive {
-    private final CPU cpu;
+public class M2Drive extends AbstractDrive implements CpuAwareDrive {
+    private CPU cpu;
 
     public M2Drive(String name, Capacity storageCapacity, FileService fileService, CPU cpu) {super(name, storageCapacity, fileService);
         this.cpu = cpu;
     }
-
+    @Override
+    public void setCPU(CPU cpu) {
+        this.cpu = cpu;
+    }
 
     @Override
     public List<File> findFileByContent(String textFragment) throws FileNotFoundException {
@@ -112,6 +116,6 @@ public class M2Drive extends AbstractDrive {
 
     @Override
     public ComponentType getType() {
-        return null;
+        return ComponentType.M2_DRIVE;
     }
 }

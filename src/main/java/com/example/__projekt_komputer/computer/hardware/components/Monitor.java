@@ -21,7 +21,7 @@ public class Monitor implements Components {
         height = 600;
     }
     public String getResolution(){
-        return "Current resolution: " + width + "x" + height;
+        return  width + "x" + height;
     }
 
     @Override

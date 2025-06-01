@@ -1,16 +1,12 @@
 package com.example.__projekt_komputer.computer.hardware.computer;
 
-import com.example.__projekt_komputer.computer.hardware.components.CPU;
-import com.example.__projekt_komputer.computer.hardware.components.Components;
-import com.example.__projekt_komputer.computer.hardware.components.Headphones;
-import com.example.__projekt_komputer.computer.hardware.components.Monitor;
+import com.example.__projekt_komputer.computer.hardware.components.*;
 import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
 import com.example.__projekt_komputer.computer.hardware.components.usbdevice.USBDevice;
-import com.example.__projekt_komputer.computer.software.file.shared.File;
-import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Computer {
     List<Components> components = new ArrayList<>();
@@ -19,11 +15,13 @@ public class Computer {
 
 
     private static Computer instance;
+    private CPU activeCPU;
 
     private Computer(Monitor monitor, Drive drive, CPU cpu) {
         components.add(monitor);
         components.add(drive);
         components.add(cpu);
+        this.activeCPU = cpu;
     }
 
     public static Computer getInstance(Monitor monitor, Drive drive, CPU cpu){
@@ -61,27 +59,47 @@ public class Computer {
         return usbDevices;
     }
 
+    public void removeDrive(String driveName){
+        if (activeDrive != null && activeDrive.getName().equals(driveName)) {
+            components.remove(activeDrive);
+            activeDrive = null;
+            System.out.println("Active drive removed. No drive is currently active");
+            return;
+        }
+        inactiveDrives.removeIf(drive -> drive.getName().equals(driveName));
 
-    public void addComponent(Components component) {
-        components.add(component);
-    }
-
-    public void removeComponent(Components component){
-        components.remove(component);
     }
     public void listComponents(){
-        components.forEach(System.out::println);
+        System.out.println("[Monitor] \n" + "Name: " + getMonitor().getName() + ", Resolution: " + getMonitor().getResolution());
+        System.out.println();
+        System.out.println("[CPU] \n" + "Name: " + activeCPU.getName() + ", Threads: " + activeCPU.getThreads());
+        System.out.println();
+        System.out.println("[Active disk] \n" + "Name: " + activeDrive.getName() + ", Type: " + activeDrive.getType() + ", Size: " + activeDrive.getCapacity());
+        System.out.println();
+        System.out.println("[Inactive disks]");
+        for (Drive drive : inactiveDrives){
+            System.out.println("Name: " + drive.getName() + ", Type: " + drive.getType() + ", Size: " + drive.getCapacity());
+        }
     }
 
-    public void addFile(File file){
-        var drive = getActiveDrive();
-        drive.addFile(file);
-        components.add(drive);
+    public void addFile(Scanner scanner){
+        if (this.activeDrive == null){
+            throw new IllegalStateException("No drive is currently active");
+        }
+       getActiveDrive().addFile(scanner);
+    }
+    public void removeFile(String fileName){
+        if (this.activeDrive == null){
+            throw new IllegalStateException("No drive is currently active");
+        }
+        getActiveDrive().removeFile(fileName);
     }
 
     public void listFiles(){
-        var drive = getActiveDrive();
-        drive.listFiles();
+        if (this.activeDrive == null){
+            throw new IllegalStateException("No drive is currently active");
+        }
+        getActiveDrive().listFiles();
     }
 
     public void setActiveDrive(Drive drive) {
@@ -92,19 +110,39 @@ public class Computer {
         components.removeIf(c -> c instanceof Drive);
         components.add(drive);
     }
+
     public void changeActiveDrive(String name){
         for (Drive drive : inactiveDrives){
             if (drive.getName().equals(name)){
                 setActiveDrive(drive);
-                break;
+                return;
             }
         }
         throw new IllegalStateException("No drive of this name");
     }
+
     public Drive getActiveDrive() {
         if (activeDrive == null) {
-            throw new IllegalStateException("No active drive is currently set");
+            throw new IllegalStateException("No drive is currently active");
         }
         return activeDrive;
     }
+
+    public void changeCPU(CPU newCpu) {
+        components.removeIf(component -> component instanceof CPU);
+        components.add(newCpu);
+        this.activeCPU = newCpu;
+
+        if (activeDrive instanceof CpuAwareDrive cpuAwareDrive) {
+            cpuAwareDrive.setCPU(newCpu);
+        }
+    }
+
+    public CPU getActiveCPU() {
+        if (activeCPU == null) {
+            throw new IllegalStateException("No CPU is currently active");
+        }
+        return activeCPU;
+    }
+
 }

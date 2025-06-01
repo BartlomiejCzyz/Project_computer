@@ -15,9 +15,9 @@ public class DriveFactory {
         System.out.println("Enter drive name: ");
         String driveName = scanner.nextLine().toUpperCase();
 
-        System.out.println("Enter drive capacity (e.g. GB64, GB128): ");
-        String capacityStr = scanner.nextLine().toUpperCase();
-        Capacity capacity = Capacity.valueOf(capacityStr);
+        //System.out.println("Enter drive capacity (e.g. GB64, GB128): ");
+       // String capacityStr = scanner.nextLine().toUpperCase();
+        Capacity capacity = Capacity.GB64;
 
         return switch (driveType.toUpperCase()) {
             case "HDD" -> new HDDDrive(driveName, capacity, fileService);

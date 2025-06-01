@@ -49,6 +49,6 @@ public class HDDDrive extends AbstractDrive {
 
     @Override
     public ComponentType getType() {
-        return ComponentType.DRIVE;
+        return ComponentType.HDD_DRIVE;
     }
 }

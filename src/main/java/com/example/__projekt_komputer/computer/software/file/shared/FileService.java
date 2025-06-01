@@ -31,5 +31,7 @@ public class FileService {
     public List<File> listFiles() {
         return fileRepository.findAll();
     }
-
+    public List<File> findFilesByContent(String fragment) {
+        return fileRepository.findByContentContaining(fragment);
+    }
 }
