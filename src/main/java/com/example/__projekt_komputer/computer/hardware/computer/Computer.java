@@ -113,7 +113,7 @@ public class Computer {
 
     public void changeActiveDrive(String name){
         for (Drive drive : inactiveDrives){
-            if (drive.getName().equals(name)){
+            if (drive.getName().equals(name.toUpperCase())){
                 setActiveDrive(drive);
                 return;
             }

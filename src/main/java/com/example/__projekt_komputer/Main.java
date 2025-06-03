@@ -32,11 +32,11 @@ public class Main {
 
         System.out.println("Computer creator: ");
 
-        CPU cpu = new CPU("intel", 8);
-       // CPU cpu = CPU.createCPU(scanner);
+        //CPU cpu = new CPU("intel", 8);
+        CPU cpu = CPU.createCPU(scanner);
 
-        //Drive drive = DriveFactory.createDrive(scanner, fileService, cpu);
-       Drive drive = new SSDDrive("ssdrive", Capacity.GB64, fileService, cpu);
+        Drive drive = DriveFactory.createDrive(scanner, fileService, cpu);
+       //Drive drive = new SSDDrive("ssdrive", Capacity.GB64, fileService, cpu);
 
         Computer computer = Computer.getInstance(monitor, drive, cpu);
         computer.setActiveDrive(drive);
@@ -128,8 +128,8 @@ public class Main {
                                 try {
                                     Instant start = Instant.now();
                                     System.out.println("Enter fragment of text you are looking for: ");
-                                    //String textFragment = scanner.nextLine();
-                                    List<File> fileFound = computer.getActiveDrive().findFileByContent("Libijskiej.");
+                                    String textFragment = scanner.nextLine();
+                                    List<File> fileFound = computer.getActiveDrive().findFileByContent(textFragment);
                                     Instant end = Instant.now();
                                     long duration = Duration.between(start, end).toMillis();
                                     long durationSec = duration / 1000;
