@@ -42,7 +42,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -58,6 +68,19 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.15.0</version>
+				<configuration>
+					<targetClasses>
+						<param>com.example.__projekt_komputer.*</param>
+					</targetClasses>
+					<targetTests>
+						<param>com.example.__projekt_komputer.*Test</param>
+					</targetTests>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

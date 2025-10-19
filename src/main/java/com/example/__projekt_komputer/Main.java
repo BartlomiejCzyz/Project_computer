@@ -1,18 +1,17 @@
 package com.example.__projekt_komputer;
 
-import com.example.__projekt_komputer.computer.hardware.components.CPU;
-import com.example.__projekt_komputer.computer.hardware.components.Monitor;
-import com.example.__projekt_komputer.computer.hardware.components.drive.Drive;
-import com.example.__projekt_komputer.computer.hardware.components.drive.DriveFactory;
-import com.example.__projekt_komputer.computer.hardware.components.drive.HDDDrive;
-import com.example.__projekt_komputer.computer.hardware.components.drive.SSDDrive;
-import com.example.__projekt_komputer.computer.hardware.computer.Computer;
-import com.example.__projekt_komputer.computer.hardware.computer.MenuIndicator;
-import com.example.__projekt_komputer.computer.hardware.computer.MenuOption;
-import com.example.__projekt_komputer.computer.software.file.shared.Capacity;
-import com.example.__projekt_komputer.computer.software.file.shared.File;
-import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
-import com.example.__projekt_komputer.computer.software.file.shared.FileService;
+import com.example.__projekt_komputer.casing.exceptions.TextFragmentIsNullException;
+import com.example.__projekt_komputer.casing.hardware.components.CPU;
+import com.example.__projekt_komputer.casing.hardware.components.CPUInputReader;
+import com.example.__projekt_komputer.casing.hardware.components.Monitor;
+import com.example.__projekt_komputer.casing.hardware.components.drive.Drive;
+import com.example.__projekt_komputer.casing.hardware.components.drive.DriveFactory;
+import com.example.__projekt_komputer.casing.hardware.computer.Computer;
+import com.example.__projekt_komputer.casing.hardware.computer.MenuIndicator;
+import com.example.__projekt_komputer.casing.hardware.computer.MenuOption;
+import com.example.__projekt_komputer.casing.software.file.shared.AppFile;
+import com.example.__projekt_komputer.casing.exceptions.AppFileNotFoundException;
+import com.example.__projekt_komputer.casing.software.file.shared.FileService;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,18 +24,39 @@ public class Main {
     public Main(FileService fileService) {
         this.fileService = fileService;
     }
-    public void run() throws FileNotFoundException {
+    public void run() throws AppFileNotFoundException {
         Scanner scanner = new Scanner(System.in);
+        CPUInputReader cpuInputReader = new CPUInputReader(scanner);
 
         Monitor monitor = new Monitor("Dell");
 
         System.out.println("Computer creator: ");
 
-        //CPU cpu = new CPU("intel", 8);
-        CPU cpu = CPU.createCPU(scanner);
+        CPU cpu = null;
+        while (cpu==null){
+            try {
+                cpu = cpuInputReader.readCPU();
+                break;
+            }catch (RuntimeException e){
+                System.out.println("Failed to create CPU: " + e.getMessage());
+                System.out.println("Try again");
+            }
 
-        Drive drive = DriveFactory.createDrive(scanner, fileService, cpu);
-       //Drive drive = new SSDDrive("ssdrive", Capacity.GB64, fileService, cpu);
+        }
+
+        Drive drive = null;
+        while (drive==null){
+            try {
+                drive = DriveFactory.createDriveFromUserInput(scanner, fileService, cpu);
+                break;
+            }catch (IllegalArgumentException e){
+                System.out.println("Failed to create Drive: " + e.getMessage());
+                System.out.println("Try again");
+            }
+
+        }
+
+
 
         Computer computer = Computer.getInstance(monitor, drive, cpu);
         computer.setActiveDrive(drive);
@@ -50,7 +70,7 @@ public class Main {
                     1. USB devices
                     2. Files
                     3. Hardware
-                    4. end <- to exit
+                    end <- to exit
                     """);
             userChoice = MenuOption.chosenAction(scanner.nextLine(), MenuIndicator.MAIN_MENU);
 
@@ -111,36 +131,63 @@ public class Main {
 
                         switch (userChoice){
                             case ADD_FILE ->{
-                                computer.addFile(scanner);
+                                try {
+                                    System.out.println("[File creator]");
+                                    System.out.println("Enter file name: ");
+                                    String fileName = scanner.nextLine();
+                                    System.out.println("Enter file content: ");
+                                    String fileContent = scanner.nextLine();
+
+                                    AppFile appFile = new AppFile(fileName, fileContent, "text", 0);
+                                    computer.addFile(appFile);
+                                } catch (IllegalStateException e){
+                                    System.out.println(e.getMessage());
+                                }
                             }
                             case REMOVE_FILE ->{
                                 System.out.println("Enter file name to remove: ");
                                 String fileName = scanner.nextLine();
-                                computer.removeFile(fileName);
+                                boolean removed = false;
+
+                                try {
+                                    removed = computer.removeFile(fileName);
+                                }catch (IllegalStateException e){
+                                    System.out.println(e.getMessage());
+                                }
+
+                                if (removed){
+                                    System.out.println("File deleted successfully");
+                                }else {
+                                    System.out.println("No file found");
+                                }
                             }
                             case FIND_FILE_BY_NAME ->{
                                 System.out.println("Enter file name: ");
                                 String fileName = scanner.nextLine();
-                                File fileByName = drive.findFileByName(fileName);
-                                System.out.println("Name: " + fileByName.getName() + ", type: " + fileByName.getType() + ", size: " + fileByName.getSize() + ", content: \n" + fileByName.getContent());
+                                try {
+                                    AppFile appFileByName = drive.findFileByName(fileName);
+                                    System.out.println("Name: " + appFileByName.getName() + ", type: " + appFileByName.getType() + ", size: " + appFileByName.getSize() + ", content: \n" + appFileByName.getContent());
+                                }catch (AppFileNotFoundException e){
+                                    System.out.println(e.getMessage());
+                                }
                             }
                             case FIND_FILE_BY_CONTENT -> {
                                 try {
                                     Instant start = Instant.now();
                                     System.out.println("Enter fragment of text you are looking for: ");
                                     String textFragment = scanner.nextLine();
-                                    List<File> fileFound = computer.getActiveDrive().findFileByContent(textFragment);
+                                    List<AppFile> appFileFound = computer.getActiveDrive().findFileByContent(textFragment);
                                     Instant end = Instant.now();
                                     long duration = Duration.between(start, end).toMillis();
                                     long durationSec = duration / 1000;
                                     long durationMili = duration % 1000;
 
-                                    for (File file : fileFound){
-                                        System.out.println(file.getName());
+                                    for (AppFile appFile : appFileFound){
+                                        System.out.println(appFile.getName());
                                     }
                                     System.out.println("Operation took: " + durationSec + " seconds i " + durationMili + " milliseconds");
-                                } catch (FileNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                } catch (AppFileNotFoundException | TextFragmentIsNullException e) {
+                                    System.out.println(e.getMessage());
                                 }
                             }
                             case LIST_ALL_FILES ->{
@@ -180,22 +227,41 @@ public class Main {
 
                         switch (userChoice){
                             case ADD_DRIVE ->{
-                                Drive newDrive = DriveFactory.createDrive(scanner, fileService, cpu);
-                                computer.setActiveDrive(newDrive);
+                                try {
+                                    Drive newDrive = DriveFactory.createDriveFromUserInput(scanner, fileService, cpu);
+                                    computer.setActiveDrive(newDrive);
+                                }catch (IllegalArgumentException e){
+                                    System.out.println("Failed to create drive: " + e.getMessage());
+                                }
                             }
                             case REMOVE_DRIVE ->{
                                 System.out.println("Enter drive name to remove: ");
                                 String driveName = scanner.nextLine();
-                                computer.removeDrive(driveName);
+                                boolean removed = computer.removeDrive(driveName);
+                                if (removed){
+                                    System.out.println("Successfully removed Drive: " + driveName);
+                                }else {
+                                    System.out.println("No drive of given name: " + driveName);
+                                }
                             }
                             case CHANGE_DRIVE -> {
                                 System.out.println("Enter drive's name");
                                 String driveName = scanner.nextLine();
-                                computer.changeActiveDrive(driveName);
+                                try {
+                                    computer.changeActiveDrive(driveName);
+                                }catch (IllegalStateException e){
+                                    System.out.println(e.getMessage());
+                                }
+
                             }
                             case CHANGE_CPU ->{
-                                CPU newCPU = CPU.createCPU(scanner);
-                                computer.changeCPU(newCPU);
+                                try {
+                                    CPU newCPU = cpuInputReader.readCPU();
+                                    computer.changeCPU(newCPU);
+                                }catch (RuntimeException e) {
+                                    System.out.println("Failed to create CPU: " + e.getMessage());
+                                }
+
                             }
                             case LIST_HARDWARE ->{
                                 computer.listComponents();

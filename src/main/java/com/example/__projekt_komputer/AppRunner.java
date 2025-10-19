@@ -1,8 +1,7 @@
 package com.example.__projekt_komputer;
 
-import com.example.__projekt_komputer.Main;
-import com.example.__projekt_komputer.computer.software.file.shared.FileNotFoundException;
-import com.example.__projekt_komputer.computer.software.file.shared.FileService;
+import com.example.__projekt_komputer.casing.exceptions.AppFileNotFoundException;
+import com.example.__projekt_komputer.casing.software.file.shared.FileService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ public class AppRunner implements CommandLineRunner {
         this.fileService = fileService;
     }
     @Override
-    public void run(String... args) throws FileNotFoundException {
+    public void run(String... args) throws AppFileNotFoundException {
         new Main(fileService).run();
     }
 }
