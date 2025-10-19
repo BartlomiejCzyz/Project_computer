@@ -1,4 +1,5 @@
 Autor: Bartłomiej Czyż
+
 Program ma przedstawiać symulator komputera program działa na zasadzie menu wyborów w konsoli
 
 menu usb devices obecnie jest nie zaimplementowane
