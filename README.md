@@ -1,7 +1,7 @@
 # Symulator komputera
 
 **Autor:** Bartłomiej Czyż  
-**Technologie:** Java, Spring Boot, MySQL, JUnit, Mockito
+**Technologie:** Java, Maven, Spring Boot, MySQL, JUnit, Mockito
 
 ## Opis projektu
 
