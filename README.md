@@ -1,14 +1,63 @@
-Autor: Bartłomiej Czyż
+# Symulator komputera
 
-Program ma przedstawiać symulator komputera program działa na zasadzie menu wyborów w konsoli
+**Autor:** Bartłomiej Czyż  
+**Technologie:** Java, Spring Boot, MySQL, JUnit, Mockito
 
-menu usb devices obecnie jest nie zaimplementowane
+## Opis projektu
 
-w menu file jest opcja dodania plików do bazy danych, usunięcia, wyświetlenia wszystkich plików, wyszukania po nazwie oraz wyszukania po fragmencie tekstu. funkcja ta jest wykonywana w inny sposób w zależności od typu aktywnego dysku
+Projekt przedstawia symulator komputera działającego w konsoli. Aplikacja udostępnia menu tekstowe, które umożliwia zarządzanie wirtualnymi komponentami sprzętowymi oraz plikami przechowywanymi w bazie danych.  
+System wykorzystuje wzorce projektowe takie jak Factory, Singleton oraz Strategy, a także wielowątkowość i różne algorytmy wyszukiwania.
 
-w menu hardware są funkcje umożliwiające dodanie nowego dysku który jest automatycznie aktywowany a poprzedni jest dodawany do listy dysków nie aktywnych, usuniecie dysku po podaniu jego nazwy,
-zmiana dysku na dysk który obecnie jest na liście dysków nieaktywnych zmiana cpu która odpowiada za liczbe wątków w programie, oraz wyświetlenie wszystkich sprzętów.
-Dostępne są 4 typy dysków: HDD, SSD, M2 i M4 największą ich róznicą jest metoda wyszukująca plik po zadanym fragmencie. W HDD jest to naiwne sprawdzanie każdej litery, W SSD podobnie z rozszerzeniem o wielowątkowość,
-W M2 jest wykorzystana wielowątkowość wraz z algorytmem rolling hash (Rabin-Karp), W M4 metoda ta jest oddelegowana do bazy danych 
+## Funkcjonalności
 
-pliki w bazie danych są w języku angielskim
+### File Menu
+- Dodawanie plików do bazy danych
+- Usuwanie plików
+- Wyświetlanie wszystkich plików
+- Wyszukiwanie pliku po nazwie
+- Wyszukiwanie pliku po fragmencie tekstu
+
+Sposób działania wyszukiwania zależy od aktualnie aktywnego dysku:
+- HDD: naiwne sprawdzanie każdej litery
+- SSD: naiwne wyszukiwanie z wykorzystaniem wielowątkowości
+- M2: algorytm Rabin-Karp z wielowątkowością
+- M4: wyszukiwanie delegowane do bazy danych
+
+### Hardware Menu
+- Dodawanie nowego dysku (automatyczna zmiana aktywnego dysku)
+- Usuwanie dysku po nazwie
+- Zmiana aktywnego dysku na inny z listy nieaktywnych
+- Zmiana CPU (wpływa na liczbę dostępnych wątków)
+- Wyświetlanie wszystkich komponentów
+
+Dostępne typy dysków:
+- HDD
+- SSD
+- M2
+- M4
+
+### USB Devices Menu
+- Obecnie niezaimplementowane (przewidziane pod przyszłą rozbudowę)
+
+## Architektura projektu
+
+Projekt został zaprojektowany modularnie. Każdy podzespół jest reprezentowany jako osobna klasa implementująca wspólny interfejs `Components`.
+
+Najważniejsze elementy:
+- Computer – główna klasa zarządzająca programem
+- CPU – przechowuje liczbę wątków dostępnych w systemie
+- Drive (HDD, SSD, M2, M4) – obsługuje operacje na plikach
+- FileService – pośrednik pomiędzy aplikacją a bazą danych MySQL
+- Main – logika interakcji z użytkownikiem poprzez konsolę
+
+Niektóre dyski implementują interfejs `CpuAwareDrive`, dzięki czemu mogą dynamicznie reagować na zmianę CPU.
+
+## Testowanie
+
+Projekt zawiera testy jednostkowe przygotowane przy użyciu JUnit 5 oraz Mockito.
+
+Testowane są:
+- klasy modelowe
+- poprawność walidacji
+- obsługa wyjątków
+- działanie fabryk
